@@ -1,0 +1,18 @@
+#sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates
+#curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+#sudo apt-get update
+#sudo apt -y install nodejs
+#sudo apt -y install gcc g++ make
+#sudo apt install -y build-essential
+#curl -L https://npmjs.org/install.sh | sudo sh
+#sudo npm install -g @angular/cli
+
+
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get install curl
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo npm install -g @angular/cli
+
+cd /vagrant/
+sudo ng new front
