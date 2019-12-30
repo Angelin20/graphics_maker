@@ -2,11 +2,24 @@
 #curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 #sudo apt-get update
 #sudo apt -y install nodejs
+
+**********Opcion react ******************
+sudo npm install -g create-react-app
+sudo npm install -g yarn
+#create app
+sudo yarn start
+
+sudo npm install --save reactstrap react react-dom
+sudo npm install bootstrap -S
+
+install bower
+
+
+**********Opcion para angular************
 #sudo apt -y install gcc g++ make
 #sudo apt install -y build-essential
 #curl -L https://npmjs.org/install.sh | sudo sh
 #sudo npm install -g @angular/cli
-
 
 sudo apt-get update
 sudo apt-get -y upgrade
@@ -16,3 +29,6 @@ sudo npm install -g @angular/cli
 
 cd /vagrant/
 sudo ng new front
+
+*****************************************
+
