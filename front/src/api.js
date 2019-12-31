@@ -1,4 +1,4 @@
-const url = 'http://127.0.0.1:8000/api/v1/charts';
+const url = 'http://127.0.0.1:8000/api/v1/chart';
 
 export const fetchCharts = async () => {
     return fetch(url,{})

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button,Container,Row,Col} from 'reactstrap';
 
 import ListChart from './components/ListChart';
+import AddChartForm from './components/AddChartForm';
 import {fetchCharts,fetchChart,addChart,updateChart} from './api';
 
 class App extends Component {
@@ -18,6 +19,7 @@ class App extends Component {
     this.handleItemClick = this.handleItemClick.bind(this);
     this.handleAddChart = this.handleAddChart.bind(this);
     this.getData = this.getData.bind(this);
+    this.handleSaveChart = this.handleSaveChart.bind(this);
   }
 
   componentDidMount(){
@@ -41,6 +43,11 @@ class App extends Component {
     })
   }
 
+  async handleSaveChart(data){
+    await addChart(data);
+    await this.getData();
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -61,7 +68,7 @@ class App extends Component {
               <p>content</p>
               {
                 this.state.is_creating ?
-                "creating now ..." :
+                <AddChartForm handleSave={this.handleSaveChart}/> :
                 `Editing note with id: ${this.state.current_chart_id}`
               }
             </Col>
