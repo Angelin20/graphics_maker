@@ -3,7 +3,9 @@ import {Button,Container,Row,Col} from 'reactstrap';
 
 import ListChart from './components/ListChart';
 import AddChartForm from './components/AddChartForm';
-import {fetchCharts,fetchChart,addChart,updateChart} from './api';
+import EditChartForm from './components/EditChartForm';
+import {fetchCharts,fetchChart,addChart} from './api';
+import Websocket from 'react-websocket';
 
 class App extends Component {
   constructor(props){
@@ -11,15 +13,17 @@ class App extends Component {
 
     this.state = {
       charts: [],
+      chart: {},
       current_chart_id:0,
       is_creating: true,
-      is_fetching:true
+      is_fetching:true,
     }
 
     this.handleItemClick = this.handleItemClick.bind(this);
     this.handleAddChart = this.handleAddChart.bind(this);
     this.getData = this.getData.bind(this);
     this.handleSaveChart = this.handleSaveChart.bind(this);
+    this.handleOnChange = this.handleOnChange.bind(this);
   }
 
   componentDidMount(){
@@ -28,12 +32,18 @@ class App extends Component {
 
   async getData(){
     let data = await fetchCharts();
-    this.setState({charts:data})
+    this.setState({charts:data, is_fetching: false});
   }
 
-  handleItemClick(id){
-    this.setState((prevState) =>{
-      return {is_creating: false, current_chart_id: id}
+  async handleItemClick(id) {
+    let selected_chart = await fetchChart(id);
+
+    this.setState((prevState) => {
+      return {
+        is_creating: false, 
+        current_chart_id: id,
+        chart: selected_chart
+      }
     })
   }
 
@@ -46,6 +56,28 @@ class App extends Component {
   async handleSaveChart(data){
     await addChart(data);
     await this.getData();
+  }
+
+  handleData(data) {
+    let result = JSON.parse(data);
+
+    let current_chart = this.state.chart;
+    if(current_chart.id === result.id) {
+      this.setState({chart: result});
+    }
+  }
+
+  handleOnChange(e) {
+    let content = e.target.value;
+    let current_chart = this.state.chart;
+    current_chart.content = content;
+
+    this.setState({
+      chart: current_chart
+    });
+
+    const socket = this.refs.socket;
+    socket.state.ws.send(JSON.stringify(current_chart));
   }
 
   render() {
@@ -62,15 +94,21 @@ class App extends Component {
           </Row>
           <Row>
             <Col xs="4">
+            {
+              this.state.is_fetching ?
+              "Loading..." :
               <ListChart charts={this.state.charts} handleItemClick={(id) => this.handleItemClick(id)} />
+            }
             </Col>
             <Col xs="8">
               <p>content</p>
               {
                 this.state.is_creating ?
                 <AddChartForm handleSave={this.handleSaveChart}/> :
-                `Editing note with id: ${this.state.current_chart_id}`
+                <EditChartForm handleChange={this.handleOnChange} chart={this.state.chart}/>
               }
+              <Websocket ref="socket" url='ws://127.0.0.1:8000/ws/charts'
+                onMessage={this.handleData.bind(this)} />
             </Col>
           </Row>
         </Container>
